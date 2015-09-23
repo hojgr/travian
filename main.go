@@ -14,7 +14,7 @@ func main() {
 	fmt.Println("Cookie: " + web.GetCookie())
 
 	resp, _ := web.GetVillage1HTML()
-	res := resources.GetResources(resp)
 
-	fmt.Printf("Lumber production: %d", res.Production.Lumber)
+	fields := resources.GetFields(resp)
+	fmt.Printf("Fields: %d, First name: %s", len(fields), fields[0].Name)
 }
