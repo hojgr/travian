@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"net/http/cookiejar"
 	"net/url"
+	"strconv"
 )
 
 type Client struct {
@@ -57,4 +58,8 @@ func (c *Client) GetCookie() string {
 	}
 
 	return ""
+}
+
+func (c *Client) UpgradeField(id int, key string) {
+	c.GoClient.Get(c.BaseURL + "/village1.php?id=" + strconv.Itoa(id) + "&k=" + key)
 }

@@ -50,3 +50,15 @@ func GetFields(resp *http.Response) []Field {
 
 	return fields
 }
+
+func GetLowestLevelField(fields []Field) Field {
+	lowest := fields[0]
+
+	for _, field := range fields {
+		if field.Level < lowest.Level {
+			lowest = field
+		}
+	}
+
+	return lowest
+}

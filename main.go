@@ -16,5 +16,7 @@ func main() {
 	resp, _ := web.GetVillage1HTML()
 
 	fields := resources.GetFields(resp)
-	fmt.Printf("Fields: %d, First name: %s", len(fields), fields[0].Name)
+	lowestField := resources.GetLowestLevelField(fields)
+
+	web.UpgradeField(lowestField.Id, "fe23c")
 }
