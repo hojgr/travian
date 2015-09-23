@@ -2,21 +2,20 @@ package main
 
 import (
 	"fmt"
-	"net/url"
 
-	"github.com/hojgr/cook/web"
+	"github.com/hojgr/travian/statistics"
+	"github.com/hojgr/travian/web"
 )
 
 func main() {
 	web := web.NewClient("http://s5.zravian.com")
+	web.Login("bond", "changeme")
 
-	web.POST(web.BaseURL, url.Values{
-		"name": {"bond"},
-		"pass": {"changeme"},
-	})
+	fmt.Println("Cookie: " + web.GetCookie())
 
-	info, _ := web.GetStatisticsHTML()
+	statsHtml, _ := web.GetStatisticsHTML()
+	stats := statistics.GetStatistics(statsHtml)
 
-	fmt.Printf("Position: %s\nPop: %s\n", info["position"], info["pop"])
+	fmt.Printf("Position: %d\nPop: %d\n", stats.Position, stats.Population)
 
 }

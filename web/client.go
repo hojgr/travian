@@ -1,13 +1,9 @@
 package web
 
 import (
-	"errors"
 	"net/http"
 	"net/http/cookiejar"
 	"net/url"
-	"strings"
-
-	"github.com/PuerkitoBio/goquery"
 )
 
 type Client struct {
@@ -29,38 +25,31 @@ func (c *Client) POST(url string, vals url.Values) (resp *http.Response, err err
 	return c.GoClient.PostForm(url, vals)
 }
 
+func (c *Client) Login(username, password string) {
+	c.POST(c.BaseURL, url.Values{
+		"name": {username},
+		"pass": {password},
+	})
+}
+
 func (c *Client) GET(url string) (resp *http.Response, err error) {
 	return c.GoClient.Get(url)
 }
 
-func (c *Client) GetStatisticsHTML() (map[string]string, error) {
+func (c *Client) GetStatisticsHTML() (*http.Response, error) {
 	resp, err := c.GoClient.Get(c.BaseURL + "/statistics.php")
+	return resp, err
+}
 
-	if resp.StatusCode != 200 {
-		return nil, errors.New("Status code is not 200, it is " + string(resp.StatusCode))
+func (c *Client) GetCookie() string {
+	url, _ := url.Parse("http://s5.zravian.com")
+	cookies := c.GoClient.Jar.Cookies(url)
+
+	for _, cookie := range cookies {
+		if cookie.Name == "PHPSESSID" {
+			return cookie.Value
+		}
 	}
 
-	if err != nil {
-		panic(err)
-	}
-
-	defer resp.Body.Close()
-
-	doc, err := goquery.NewDocumentFromResponse(resp)
-
-	s := doc.Find("tr.hl").First()
-
-	position := strings.TrimRight(s.Find(".ra").Text(), ".")
-	username := strings.Trim(s.Find(".pla").Find("a").Text(), " ")
-	alliance := s.Find("al").Text()
-	pop := s.Find(".pop").Text()
-	village_count := s.Find(".vil").Text()
-
-	return map[string]string{
-		"position":      position,
-		"username":      username,
-		"alliance":      alliance,
-		"pop":           pop,
-		"village_count": village_count,
-	}, nil
+	return ""
 }
