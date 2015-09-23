@@ -41,6 +41,11 @@ func (c *Client) GetStatisticsHTML() (*http.Response, error) {
 	return resp, err
 }
 
+func (c *Client) GetVillage1HTML() (*http.Response, error) {
+	resp, err := c.GoClient.Get(c.BaseURL + "/village1.php")
+	return resp, err
+}
+
 func (c *Client) GetCookie() string {
 	url, _ := url.Parse("http://s5.zravian.com")
 	cookies := c.GoClient.Jar.Cookies(url)

@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/hojgr/travian/statistics"
+	"github.com/hojgr/travian/resources"
 	"github.com/hojgr/travian/web"
 )
 
@@ -13,9 +13,8 @@ func main() {
 
 	fmt.Println("Cookie: " + web.GetCookie())
 
-	statsHtml, _ := web.GetStatisticsHTML()
-	stats := statistics.GetStatistics(statsHtml)
+	resp, _ := web.GetVillage1HTML()
+	res := resources.GetResources(resp)
 
-	fmt.Printf("Position: %d\nPop: %d\n", stats.Position, stats.Population)
-
+	fmt.Printf("Lumber production: %d", res.Production.Lumber)
 }
