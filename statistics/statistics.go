@@ -8,6 +8,7 @@ import (
 	"github.com/PuerkitoBio/goquery"
 )
 
+// Statistics for Village
 type Statistics struct {
 	Position     int
 	Username     string
@@ -16,6 +17,7 @@ type Statistics struct {
 	VillageCount int
 }
 
+// GetStatistics retrieves statistics
 func GetStatistics(resp *http.Response) Statistics {
 	doc, _ := goquery.NewDocumentFromResponse(resp)
 
