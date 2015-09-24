@@ -8,11 +8,13 @@ import (
 	"github.com/PuerkitoBio/goquery"
 )
 
+// Granary for Granary+Crop info
 type Granary struct {
 	Capacity int
 	Crop     int
 }
 
+// Warehouse for Warehouse info
 type Warehouse struct {
 	Capacity int
 	Lumber   int
@@ -20,6 +22,7 @@ type Warehouse struct {
 	Iron     int
 }
 
+// Production for production info
 type Production struct {
 	Lumber int
 	Clay   int
@@ -27,12 +30,14 @@ type Production struct {
 	Crop   int
 }
 
+// Resources for resources
 type Resources struct {
 	Granary    Granary
 	Warehouse  Warehouse
 	Production Production
 }
 
+// GetResources retrieves resource info
 func GetResources(resp *http.Response) Resources {
 	doc, _ := goquery.NewDocumentFromResponse(resp)
 
