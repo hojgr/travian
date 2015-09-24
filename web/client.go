@@ -5,6 +5,8 @@ import (
 	"net/http/cookiejar"
 	"net/url"
 	"strconv"
+
+	"github.com/PuerkitoBio/goquery"
 )
 
 // Client is HTTP interface that is customized for Travian
@@ -54,6 +56,12 @@ func (c *Client) GetVillage1HTML() (*http.Response, error) {
 	return resp, err
 }
 
+// GetComposeMessageHTML Returns response from Village1.php
+func (c *Client) GetComposeMessageHTML() (*http.Response, error) {
+	resp, err := c.GoClient.Get(c.BaseURL + "/msg.php?t=1")
+	return resp, err
+}
+
 // GetCookie returns PHPSESSID
 func (c *Client) GetCookie() string {
 	url, _ := url.Parse("http://s5.zravian.com")
@@ -71,4 +79,13 @@ func (c *Client) GetCookie() string {
 // UpgradeField upgrades field to a higher level
 func (c *Client) UpgradeField(id int, key string) {
 	c.GoClient.Get(c.BaseURL + "/village1.php?id=" + strconv.Itoa(id) + "&k=" + key)
+}
+
+// GetActionKey returns a key for actions (building, upgrading, ...)
+func (c *Client) GetActionKey(resp *http.Response) (key string, found bool) {
+	doc, _ := goquery.NewDocumentFromResponse(resp)
+
+	keyInput := doc.Find("input[type=hidden][name=k]").First()
+
+	return keyInput.Attr("value")
 }
