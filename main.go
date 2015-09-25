@@ -13,18 +13,29 @@ func main() {
 	web.Login("bond", "changeme")
 
 	fmt.Println("Cookie: " + web.GetCookie())
-	time.Sleep(5 * time.Second)
+
 	for {
 		villageResp, _ := web.GetVillage1HTML()
+		queue := web.GetBuildingQueue(villageResp)
 
-		composeResp, _ := web.GetComposeMessageHTML()
-		key, _ := web.GetActionKey(composeResp)
+		if len(queue.Tasks) > 0 {
+			for _, e := range queue.Tasks {
+				fmt.Printf("%s is upgrading from %d to %d. Will finish in %d\n",
+					e.Name, e.OldLevel, e.NewLevel, e.TimeLeft)
+				time.Sleep(1 * time.Second)
+			}
+		} else {
 
-		fields := resources.GetFields(villageResp)
-		lowestField := resources.GetLowestLevelField(fields)
+			composeResp, _ := web.GetComposeMessageHTML()
+			key, _ := web.GetActionKey(composeResp)
 
-		web.UpgradeField(lowestField.Id, key)
+			villageResp, _ = web.GetVillage1HTML()
+			fields := resources.GetFields(villageResp)
+			lowestField := resources.GetLowestLevelField(fields)
 
-		fmt.Printf("Upgrading %s to level %d\n", lowestField.Name, lowestField.Level+1)
+			web.UpgradeField(lowestField.Id, key)
+
+			fmt.Printf("Upgrading %s to level %d\n", lowestField.Name, lowestField.Level+1)
+		}
 	}
 }

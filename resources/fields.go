@@ -22,7 +22,11 @@ type Field struct {
 }
 
 func GetFields(resp *http.Response) []Field {
-	doc, _ := goquery.NewDocumentFromResponse(resp)
+	doc, err := goquery.NewDocumentFromResponse(resp)
+
+	if err != nil {
+		panic(err)
+	}
 
 	altRegex := regexp.MustCompile("(.*) level ([0-9]+)")
 	hrefRegex := regexp.MustCompile("\\?id=([0-9]+)")

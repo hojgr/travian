@@ -4,7 +4,9 @@ import (
 	"net/http"
 	"net/http/cookiejar"
 	"net/url"
+	"regexp"
 	"strconv"
+	"strings"
 
 	"github.com/PuerkitoBio/goquery"
 )
@@ -88,4 +90,60 @@ func (c *Client) GetActionKey(resp *http.Response) (key string, found bool) {
 	keyInput := doc.Find("input[type=hidden][name=k]").First()
 
 	return keyInput.Attr("value")
+}
+
+type BuildingQueue struct {
+	Tasks []Task
+}
+
+type Task struct {
+	Name     string
+	OldLevel int
+	NewLevel int
+	TimeLeft int
+}
+
+func (c *Client) GetBuildingQueue(resp *http.Response) BuildingQueue {
+	doc, _ := goquery.NewDocumentFromResponse(resp)
+
+	contract := doc.Find("table#building_contract")
+
+	queue := BuildingQueue{}
+
+	contract.Find("tbody tr").Each(func(index int, s *goquery.Selection) {
+		name, newLevel, oldLevel := parseNameAndLevel(s.Find("td:nth-child(2)").Text())
+		time := parseStringTimeToSeconds(s.Find("td:nth-child(3) span").Text())
+
+		queue.Tasks = append(queue.Tasks, Task{
+			Name:     name,
+			OldLevel: oldLevel,
+			NewLevel: newLevel,
+			TimeLeft: time,
+		})
+	})
+
+	return queue
+}
+
+func parseNameAndLevel(nameAndLevel string) (name string, newLevel, oldLevel int) {
+	nameAndLevelRegexp := regexp.MustCompile("(.*) \\(level ([0-9]+)")
+
+	matches := nameAndLevelRegexp.FindAllStringSubmatch(nameAndLevel, 1)
+	name = matches[0][1]
+	newLevelString := matches[0][2]
+
+	newLevel, _ = strconv.Atoi(newLevelString)
+	oldLevel = newLevel - 1
+
+	return name, newLevel, oldLevel
+}
+
+func parseStringTimeToSeconds(time string) int {
+	timeArr := strings.Split(time, ":")
+
+	hour, _ := strconv.Atoi(timeArr[0])
+	minute, _ := strconv.Atoi(timeArr[1])
+	second, _ := strconv.Atoi(timeArr[2])
+
+	return hour*60*60 + minute*60 + second
 }
