@@ -58,6 +58,12 @@ func (c *Client) GetVillage1HTML() (*http.Response, error) {
 	return resp, err
 }
 
+// GetVillage1HTML Returns response from Village1.php
+func (c *Client) GetVillage2HTML() (*http.Response, error) {
+	resp, err := c.GoClient.Get(c.BaseURL + "/village2.php")
+	return resp, err
+}
+
 // GetComposeMessageHTML Returns response from Village1.php
 func (c *Client) GetComposeMessageHTML() (*http.Response, error) {
 	resp, err := c.GoClient.Get(c.BaseURL + "/msg.php?t=1")
