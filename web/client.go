@@ -160,3 +160,19 @@ func parseStringTimeToSeconds(time string) int {
 
 	return hour*60*60 + minute*60 + second
 }
+
+func (c *Client) Raid(villageId string, key string) {
+	village := villageId
+
+	troopId := "11"
+	troopCount := "100"
+
+	v := url.Values{}
+	v.Set("id", village)
+	v.Set("c", "4")
+	v.Set("t["+troopId+"]", troopCount)
+	v.Set("k", key)
+
+	c.POST(c.BaseURL+"/v2v.php", v)
+
+}
