@@ -13,6 +13,6 @@ func main() {
 
 	fmt.Println("Cookie: " + web.GetCookie())
 
-	resp, _ := web.GetVillage2HTML()
-	village.GetBuildings(resp)
+	fmt.Printf("%s#%d", village.Marketplace.Name, village.Marketplace.Id)
+
 }

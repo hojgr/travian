@@ -89,6 +89,13 @@ func (c *Client) UpgradeField(id int, key string) {
 	c.GoClient.Get(c.BaseURL + "/village1.php?id=" + strconv.Itoa(id) + "&k=" + key)
 }
 
+// UpgradeField upgrades field to a higher level
+func (c *Client) BuildBuilding(parcelId int, buildingId int, key string) {
+	parcelStr := strconv.Itoa(parcelId)
+	buildingStr := strconv.Itoa(buildingId)
+	c.GoClient.Get(c.BaseURL + "/village2.php?id=" + parcelStr + "&b=" + buildingStr + "&k=" + key)
+}
+
 // GetActionKey returns a key for actions (building, upgrading, ...)
 func (c *Client) GetActionKey(resp *http.Response) (key string, found bool) {
 	doc, _ := goquery.NewDocumentFromResponse(resp)

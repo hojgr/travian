@@ -20,7 +20,19 @@ type Building struct {
 }
 
 type Village struct {
-	Buildings []Building
+	Parcels []Parcel
+}
+
+func GetBuildingByName(parcels []Parcel, requested string) (Building, bool) {
+	for _, p := range parcels {
+		if !p.Empty {
+			if p.Building.Name == requested {
+				return p.Building, true
+			}
+		}
+	}
+
+	return Building{}, false
 }
 
 func GetBuildings(resp *http.Response) Village {
@@ -34,12 +46,12 @@ func GetBuildings(resp *http.Response) Village {
 		name, level, empty := parseNameAndLevel(s.AttrOr("alt", "fail"))
 
 		if empty {
-			village.Buildings = append(village.Buildings, Parcel{
+			village.Parcels = append(village.Parcels, Parcel{
 				Id:    parcelId,
 				Empty: true,
 			})
 		} else {
-			village.Buildings = append(village.Buildings, Parcel{
+			village.Parcels = append(village.Parcels, Parcel{
 				Id:    parcelId,
 				Empty: false,
 				Building: Building{
