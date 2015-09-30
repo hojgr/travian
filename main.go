@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"time"
 
 	"github.com/hojgr/travian/web"
 )
@@ -13,29 +12,35 @@ func main() {
 
 	fmt.Println("Cookie: " + web.GetCookie())
 
-	farmList := [...]string{
-		"1016",
-		"1015",
-		"615",
-		"1212",
-		"2011",
+	farmList := [...][4]string{
+		[4]string{"5", "15", "11", "100"},
+		[4]string{"5", "14", "11", "100"},
+		[4]string{"3", "14", "11", "100"},
+		[4]string{"6", "11", "11", "100"},
+		[4]string{"10", "10", "11", "100"},
+		[4]string{"1", "-1", "11", "100"},
 	}
 
 	counter := 0 // max 5
 
 	for {
-		resp, _ := web.GetComposeMessageHTML()
-		key, _ := web.GetActionKey(resp)
-
 		v := farmList[counter]
+
 		counter++
-
-		web.Raid(v, key)
-
 		if counter == 5 {
 			counter = 0
-			time.Sleep(5 * time.Second)
+		}
+
+		resp, _ := web.GetComposeMessageHTML()
+		key, _ := web.GetActionKey(resp)
+		canAttack := web.CanAttack(v[0], v[1], key)
+
+		if canAttack {
+			resp, _ := web.GetComposeMessageHTML()
+			key, _ := web.GetActionKey(resp)
+
+			web.Raid(v[0], key)
+
 		}
 	}
-
 }

@@ -165,7 +165,7 @@ func (c *Client) Raid(villageId string, key string) {
 	village := villageId
 
 	troopId := "11"
-	troopCount := "100"
+	troopCount := "5"
 
 	v := url.Values{}
 	v.Set("id", village)
@@ -175,4 +175,27 @@ func (c *Client) Raid(villageId string, key string) {
 
 	c.POST(c.BaseURL+"/v2v.php", v)
 
+}
+
+func (c *Client) CanAttack(x, y string, key string) bool {
+	troopId := "11"
+	troopCount := "1"
+
+	v := url.Values{}
+	v.Set("x", x)
+	v.Set("y", y)
+
+	v.Set("c", "4")
+
+	v.Set("t["+troopId+"]", troopCount)
+	v.Set("k", key)
+
+	res, _ := c.POST(c.BaseURL+"/v2v.php", v)
+
+	doc, _ := goquery.NewDocumentFromResponse(res)
+
+	f := doc.Find("div#content p.error")
+	contents, _ := f.Html()
+
+	return contents == "" // if empty, no error occurred, it can go forward
 }
